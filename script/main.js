@@ -5,10 +5,14 @@ var x = 200; var y = sol;
 var vitesseSaut=50;
 var timerJump;
 var verifJump=true;
-var steeve=document.getElementById('steeve');
+
+
+
 var pas=true;
 var vitesseRun=150;
+var vitesseMoveSol=150;
 var timerRun = setInterval(function(){steeveRun();},vitesseRun);
+var timerMoveSol = setInterval(function(){solMove();},vitesseMoveSol);
 var largeurSaut=11;
 var compt = -largeurSaut;
 //
@@ -17,12 +21,12 @@ var compt = -largeurSaut;
 document.addEventListener('keydown', control);
 function steeveRun()
 {
-	resetTable();
- 	var imageObj = new Image();
+	var imageObj = new Image();
  	imageObj.onload = function() 
 	{
 	    context.drawImage(imageObj,x,y,100,100);
 	}
+ 	
 	if(pas==true)
 	{
 		imageObj.src = 'img/stevePas1.png';
@@ -33,6 +37,7 @@ function steeveRun()
 		imageObj.src = 'img/stevePas2.png'
 		pas=true;
 	}
+	resetTable();
 }
 
 function resetTable()
@@ -40,7 +45,41 @@ function resetTable()
 	context.fillStyle = "white";
 	context.fillRect(0,0,canvas.width,canvas.height); 
 }
+	var x1=0;
+	var x2=1000;
+	var y1=sol+100;
+	var y2=sol+100;
+function solMove()
+{
+	
+	
 
+	if(x2==0)
+	{
+		x1=1000;
+	}
+	if(x1==0)
+	{
+		x2=1000;
+	}
+	x1=x1-20;
+	x2=x2-20;
+	var imageObj1 = new Image();
+ 		imageObj1.onload = function() 
+	    {
+	        context.drawImage(imageObj1,x1,y1,1000,100);
+	    };
+	var imageObj2 = new Image();
+ 		imageObj2.onload = function() 
+	    {
+	        context.drawImage(imageObj2,x2,y2,1000,100);
+	    };
+	imageObj1.src = 'img/sol.png';
+	imageObj2.src = 'img/sol.png';
+	
+	
+
+}
 
 function jump()
 {

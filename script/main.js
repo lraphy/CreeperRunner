@@ -9,8 +9,8 @@ var verifJump=true;
 
 
 var pas=true;
-var vitesseRun=150;
-var vitesseMoveSol=150;
+var vitesseRun=100;
+var vitesseMoveSol=100;
 var timerRun = setInterval(function(){steeveRun();},vitesseRun);
 var timerMoveSol = setInterval(function(){solMove();},vitesseMoveSol);
 var largeurSaut=11;
@@ -21,23 +21,18 @@ var compt = -largeurSaut;
 document.addEventListener('keydown', control);
 function steeveRun()
 {
-	var imageObj = new Image();
- 	imageObj.onload = function() 
-	{
-	    context.drawImage(imageObj,x,y,100,100);
-	}
- 	
+	var steve=document.getElementById("steve");
 	if(pas==true)
 	{
-		imageObj.src = 'img/stevePas1.png';
+		steve.style.backgroundImage= 'url("img/stevePas1.png")';
 		pas=false;
 	}
 	else
 	{
-		imageObj.src = 'img/stevePas2.png'
+		steve.style.backgroundImage = 'url("img/stevePas2.png")';
 		pas=true;
 	}
-	resetTable();
+	
 }
 
 function resetTable()
@@ -47,8 +42,8 @@ function resetTable()
 }
 	var x1=0;
 	var x2=1000;
-	var y1=sol+100;
-	var y2=sol+100;
+	var y1=sol+80;
+	var y2=sol+80;
 function solMove()
 {
 	
@@ -56,14 +51,14 @@ function solMove()
 
 	if(x2==0)
 	{
-		x1=1000;
+		x1=960;
 	}
 	if(x1==0)
 	{
-		x2=1000;
+		x2=960;
 	}
-	x1=x1-20;
-	x2=x2-20;
+	x1=x1-15;
+	x2=x2-15;
 	var imageObj1 = new Image();
  		imageObj1.onload = function() 
 	    {
@@ -85,19 +80,15 @@ function jump()
 {
 
 		clearInterval(timerRun);
- 		resetTable();
- 		var imageObj = new Image();
- 		imageObj.onload = function() 
-	    {
-	        context.drawImage(imageObj,x,y,100,100);
-	    };
+ 		var steve=document.getElementById("steve");
  		
  		if(compt<1)
  		{
  			y=y-((compt*compt)/3);
  			
  		
-	      imageObj.src = 'img/steveJump.png';
+	      steve.style.backgroundImage= 'url("img/steveJump.png")';
+	     
 	 		
 
  		}
@@ -106,7 +97,8 @@ function jump()
  			y=y+((compt*compt)/3);
  			
  		
-	      imageObj.src = 'img/steveJump.png';
+	      steve.style.backgroundImage = 'url("img/steveJump.png")';
+	      
 	 		
 
  		}
@@ -119,13 +111,14 @@ function jump()
  			compt=-largeurSaut;
  			y=sol;
  			verifJump=true;
- 			imageObj.src = 'img/stevePas1.png';
+ 			steve.style.backgroundImage = 'url("img/stevePas1.png")';
  			pas=false;
  			timerRun=setInterval(function(){steeveRun();}, vitesseRun);
 
  			
 
  		}
+ 		 steve.style.top =y+"px";
 
 
 

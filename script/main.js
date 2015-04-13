@@ -1,12 +1,39 @@
 var canvas = document.getElementById("jeu");
 var context = canvas.getContext("2d");
-context.fillStyle = "green";
-var x = 200; var y = 500;
-context.fillRect(x,y,50,50);
+var sol=600;
+var x = 200; var y = sol;
+var vitesseSaut=50;
 var timerJump;
+var verifJump=true;
+var steeve=document.getElementById('steeve');
+var pas=true;
+var vitesseRun=150;
+var timerRun = setInterval(function(){steeveRun();},vitesseRun);
+var largeurSaut=11;
+var compt = -largeurSaut;
+//
 
 
 document.addEventListener('keydown', control);
+function steeveRun()
+{
+	resetTable();
+ 	var imageObj = new Image();
+ 	imageObj.onload = function() 
+	{
+	    context.drawImage(imageObj,x,y,100,100);
+	}
+	if(pas==true)
+	{
+		imageObj.src = 'img/stevePas1.png';
+		pas=false;
+	}
+	else
+	{
+		imageObj.src = 'img/stevePas2.png'
+		pas=true;
+	}
+}
 
 function resetTable()
 {
@@ -14,42 +41,66 @@ function resetTable()
 	context.fillRect(0,0,canvas.width,canvas.height); 
 }
 
-var compt = 0;
+
 function jump()
 {
-		
+
+		clearInterval(timerRun);
  		resetTable();
- 		if(compt<5)
+ 		var imageObj = new Image();
+ 		imageObj.onload = function() 
+	    {
+	        context.drawImage(imageObj,x,y,100,100);
+	    };
+ 		
+ 		if(compt<1)
  		{
- 			y=y-25;
+ 			y=y-((compt*compt)/3);
+ 			
+ 		
+	      imageObj.src = 'img/steveJump.png';
+	 		
+
  		}
+ 		else if (compt<largeurSaut)
+ 		{
+ 			y=y+((compt*compt)/3);
+ 			
+ 		
+	      imageObj.src = 'img/steveJump.png';
+	 		
+
+ 		}
+ 		 
+ 	
+ 		
  		else 
  		{
- 			y=y+25;
- 		}
- 		context.fillStyle = "green";
- 		context.fillRect(x,y,50,50);
- 		console.log(y);
- 		compt++;
- 		if(compt==10)
- 		{
  			clearInterval(timerJump);
- 			compt=0;
+ 			compt=-largeurSaut;
+ 			y=sol;
+ 			verifJump=true;
+ 			imageObj.src = 'img/stevePas1.png';
+ 			pas=false;
+ 			timerRun=setInterval(function(){steeveRun();}, vitesseRun);
+
+ 			
+
  		}
 
 
 
-		
-	
+ 		compt++;
 }
 
 function control(e)
 {
 	
 
-	if( e.keyCode == 38 )
+	if( e.keyCode == 38 && verifJump==true)
 		    {
-		    	timerJump = setInterval(function() { jump() }, 75);
+		    	verifJump=false;
+		    	timerJump = setInterval(function() { jump() },  vitesseSaut);
 		       
 		    }
 

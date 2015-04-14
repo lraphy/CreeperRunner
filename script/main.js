@@ -3,6 +3,7 @@ var context = canvas.getContext("2d");
 var sol=600;
 var x = 200; var y = sol;
 var vitesseSaut=50;
+var hauteur;
 var timerJump;
 var verifJump=true;
 console.log(parseInt("12px"));
@@ -16,7 +17,8 @@ var timerRun = setInterval(function(){steeveRun();},vitesseRun);
 var timerMoveSol = setInterval(function(){solMove();},vitesseMoveSol);
 var largeurSaut=11;
 var compt = -largeurSaut;
-for (var i = 0; i < 10; i++) {
+for (var i = 0; i < 5; i++) 
+		{
 			document.write('<div id="obs'+i+'"></div>');
 		};
 
@@ -57,13 +59,13 @@ function solMove()
 	if(x2==0)
 	{
 		x1=960;
-			for (var i = 0; i < 10; i++) 
+			for (var i = 0; i < 5; i++) 
 		{
 
 			var obs = document.getElementById('obs'+i);
 			if (Math.random()*10>8)
 			{
-				obs.style.marginLeft=960+(i*96)+"px";
+				obs.style.marginLeft=(i*96)+"px";
 				obs.className='obstacle';
 			}
 
@@ -73,13 +75,13 @@ function solMove()
 	if(x1==0)
 	{
 		x2=960;
-		for (var i = 0; i < 10; i++) 
+		for (var i = 0; i < 5; i++) 
 		{
 
 			var obs = document.getElementById('obs'+i);
-			if (Math.random()*10>7)
+			if (Math.random()*10>3)
 			{
-				obs.style.marginLeft=960+(i*96)+"px";
+				obs.style.marginLeft=(i*96)+"px";
 				obs.className='obstacle';
 			}
 
@@ -87,16 +89,26 @@ function solMove()
 		};
 
 	}
-		for (var i = 0; i < 10; i++) 
+		for (var i = 0; i < 5; i++) 
 		{
 
 			var obs = document.getElementById('obs'+i);
 			if (obs.className=='obstacle')
 			{
+			
+				
 				obs.style.marginLeft=parseInt(obs.style.marginLeft)-30+"px";
-				console.log('bobo');
+				if(parseInt(obs.style.marginLeft)>-960&&parseInt(obs.style.marginLeft)<-900)
+				{
+					if(y>599)
+					{
+						console.log('false');
+						resetGame();
+					}
+
+				}
 			}
-			if (parseInt(obs.style.marginLeft)<0 )
+			if (parseInt(obs.style.marginLeft)<0 && parseInt(obs.style.marginLeft)>-960)
 			{
 				obs.style.display='inline-block';
 			}
@@ -104,8 +116,6 @@ function solMove()
 			{
 				obs.style.display='none';
 			}
-
-
 		};
 	x1=x1-15;
 	x2=x2-15;
@@ -121,9 +131,6 @@ function solMove()
 	    };
 	imageObj1.src = 'img/sol.png';
 	imageObj2.src = 'img/sol.png';
-	
-	
-
 }
 
 function jump()
@@ -185,5 +192,14 @@ function control(e)
 		    	timerJump = setInterval(function() { jump() },  vitesseSaut);
 		       
 		    }
+
+}
+function resetGame()
+{
+	for (var i = 0; i < 5; i++) 
+		{
+			document.getElementById('obs'+i).className="";
+
+		}
 
 }

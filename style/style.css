@@ -1,22 +1,23 @@
 #steve
 {
 	background-image:url("../img/stevePas1.png");
-	background-size: 100px; 
+	background-size: cover; 
 	position: absolute;
+	margin-left:75px;
 	width:100px;
-	top:600px;
+	top:250px;
 	height: 100px;
 	
 }
 
 .obstacle
 {
-	top:650px;
+	top:300px;
 	height: 50px;
 	width: 50px;
-	margin-right: 20px;
 	position: absolute;
-	background-color: black;
+	background-image: url('../img/tnt.jpg');
+	background-size: cover;
 	
 
 }
@@ -28,4 +29,23 @@
 {
 	display: none;
 	position: absolute;
+}
+
+.creaper
+{
+	top:300px;
+	height: 50px;
+	width: 50px;
+	position: absolute;
+	background-color: violet;
+}
+.coin
+{
+	top:200px;
+	height: 50px;
+	width: 50px;
+	position: absolute;
+	background-image: url('../img/coffre.jpg');
+	background-size: cover;
+
 }

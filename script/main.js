@@ -7,17 +7,20 @@ var hauteur;
 var timerJump;
 var verifJump=true;
 console.log(parseInt("12px"));
+var score=0;
+var bestScore=0;
 
 
 
 var pas=true;
 var vitesseRun=100;
-var vitesseMoveSol=100;
+var vitesseMoveSol=50;
 var timerRun = setInterval(function(){steeveRun();},vitesseRun);
 var timerMoveSol = setInterval(function(){solMove();},vitesseMoveSol);
-var largeurSaut=11;
+var timerScore = setInterval(function(){Score();},vitesseRun);
+var largeurSaut=12;
 var compt = -largeurSaut;
-for (var i = 0; i < 5; i++) 
+for (var i = 0; i < 6; i++) 
 		{
 			document.write('<div id="obs'+i+'"></div>');
 		};
@@ -26,6 +29,22 @@ for (var i = 0; i < 5; i++)
 
 
 document.addEventListener('keydown', control);
+function Score()
+{
+	score++;
+	document.getElementById('score').innerHTML=score;
+	if (score%100==0&&vitesseMoveSol>10&&vitesseSaut-5>5)
+	{
+		clearInterval(timerMoveSol);
+		vitesseMoveSol=vitesseMoveSol-10;
+		vitesseSaut=vitesseSaut-5;
+		
+		timerMoveSol = setInterval(function(){solMove();},vitesseMoveSol);
+
+
+
+	}
+}
 function steeveRun()
 {
 	var steve=document.getElementById("steve");
@@ -39,6 +58,8 @@ function steeveRun()
 		steve.style.backgroundImage = 'url("img/stevePas2.png")';
 		pas=true;
 	}
+	score++;
+	document.getElementById('score').innerHTML=score;
 	
 }
 
@@ -51,6 +72,7 @@ function resetTable()
 	var x2=1000;
 	var y1=sol+80;
 	var y2=sol+80;
+
 function solMove()
 {
 	
@@ -59,13 +81,13 @@ function solMove()
 	if(x2==0)
 	{
 		x1=960;
-			for (var i = 0; i < 5; i++) 
+			for (var i = 0; i < 3; i++) 
 		{
 
 			var obs = document.getElementById('obs'+i);
-			if (Math.random()*10>8)
+			if (Math.random()*10>2)
 			{
-				obs.style.marginLeft=(i*96)+"px";
+				obs.style.marginLeft=100+(i*90)+"px";
 				obs.className='obstacle';
 			}
 
@@ -75,13 +97,13 @@ function solMove()
 	if(x1==0)
 	{
 		x2=960;
-		for (var i = 0; i < 5; i++) 
+		for (var i = 3; i < 6; i++) 
 		{
 
 			var obs = document.getElementById('obs'+i);
-			if (Math.random()*10>3)
+			if (Math.random()*10>2)
 			{
-				obs.style.marginLeft=(i*96)+"px";
+				obs.style.marginLeft=100+((i-3)*90)+"px";
 				obs.className='obstacle';
 			}
 
@@ -89,7 +111,7 @@ function solMove()
 		};
 
 	}
-		for (var i = 0; i < 5; i++) 
+		for (var i = 0; i < 6; i++) 
 		{
 
 			var obs = document.getElementById('obs'+i);
@@ -97,8 +119,8 @@ function solMove()
 			{
 			
 				
-				obs.style.marginLeft=parseInt(obs.style.marginLeft)-30+"px";
-				if(parseInt(obs.style.marginLeft)>-960&&parseInt(obs.style.marginLeft)<-900)
+				obs.style.marginLeft=parseInt(obs.style.marginLeft)-15+"px";
+				if(parseInt(obs.style.marginLeft)>-980&&parseInt(obs.style.marginLeft)<-900)
 				{
 					if(y>599)
 					{
@@ -108,7 +130,7 @@ function solMove()
 
 				}
 			}
-			if (parseInt(obs.style.marginLeft)<0 && parseInt(obs.style.marginLeft)>-960)
+			if (parseInt(obs.style.marginLeft)<0 && parseInt(obs.style.marginLeft)>-980)
 			{
 				obs.style.display='inline-block';
 			}
@@ -122,12 +144,12 @@ function solMove()
 	var imageObj1 = new Image();
  		imageObj1.onload = function() 
 	    {
-	        context.drawImage(imageObj1,x1,y1,960,100);
+	        context.drawImage(imageObj1,x1,640,960,100);
 	    };
 	var imageObj2 = new Image();
  		imageObj2.onload = function() 
 	    {
-	        context.drawImage(imageObj2,x2,y2,960,100);
+	        context.drawImage(imageObj2,x2,640,960,100);
 	    };
 	imageObj1.src = 'img/sol.png';
 	imageObj2.src = 'img/sol.png';
@@ -196,10 +218,27 @@ function control(e)
 }
 function resetGame()
 {
-	for (var i = 0; i < 5; i++) 
+	for (var i = 0; i < 6; i++) 
 		{
-			document.getElementById('obs'+i).className="";
+			document.getElementById('obs'+i).className='nada';
+			
+
+
+
 
 		}
+		if (score>bestScore)
+		{
+			bestScore=score;
+		}
+			
+			clearInterval(timerMoveSol);
+			vitesseMoveSol=50;
+			score=0;
+			timerMoveSol = setInterval(function(){solMove()},vitesseMoveSol);
+			
+			
+			document.getElementById('bestScore').innerHTML=bestScore;
+			document.getElementById('score').innerHTML=score;
 
 }

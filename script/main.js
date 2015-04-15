@@ -1,56 +1,270 @@
-var canvas = document.getElementById("jeu");
-var context = canvas.getContext("2d");
-context.fillStyle = "green";
-var x = 200; var y = 500;
-context.fillRect(x,y,50,50);
-var timerJump;
+$(document).ready(function() {
+var canvas = $("#jeu")[0];
+var context = $("#jeu")[0].getContext("2d");
 
+var block = 30;
+var PosSol = canvas.height - 30;
+var WalkableBlock = new Array();
+var obstacle = new Array();
+var index = new Array;
+index[10] = $("#dirt")[0];
+index[11] = $("#tnt")[0];
+index[1] = $("#steve1")[0];
+index[2] = $("#steve2")[0];
+index[3] = $("#steve1")[0];
+index[4] = $("#steve3")[0];
+index[5] = $("#steve4")[0];
+    
 
-document.addEventListener('keydown', control);
-
-function resetTable()
+var NumberOfWidthBlock = (canvas.width/block);
+var patate = 2;
+var decalage = 30;
+var background1 = document.getElementById('bg1');
+var background2 = document.getElementById('bg2');
+var X = 0;
+var Y = 900;
+var reset = 0;
+var ct = 0;
+var ctp = 0;
+var saut = false;
+var ctsaut = 0;
+var lvlfrequence = 985;
+var coll = $("#colision");
+    
+    
+function physicObj(posx, posy, sizex, sizey, type,collision){
+    this.posx = posx;
+    this.posy = posy;
+    this.sizex = sizex;
+    this.sizey = sizey;
+    this.type = type;
+    this.collision = collision;
+}
+    
+    
+// définition des objets statiques
+WalkableBlock[0] = new physicObj(0,PosSol,(block * NumberOfWidthBlock)+decalage,block,index[10],0);
+var personnage =  new physicObj(block*3,PosSol-60,24,60,index[1],1);
+    
+        
+function Background()
 {
-	context.fillStyle = "white";
-	context.fillRect(0,0,canvas.width,canvas.height); 
+
+    
+    context.drawImage(background1,X + reset,0);
+    context.drawImage(background2,Y + reset,0);
+
+    reset -=1;
+    if (reset == -900)
+    {
+        var tmp = X;
+        X = Y;
+        Y = tmp;
+    }
+    reset = reset%900;
+    
+
 }
 
-var compt = 0;
-function jump()
+function Draw()
 {
-		
- 		resetTable();
- 		if(compt<5)
- 		{
- 			y=y-25;
- 		}
- 		else 
- 		{
- 			y=y+25;
- 		}
- 		context.fillStyle = "green";
- 		context.fillRect(x,y,50,50);
- 		console.log(y);
- 		compt++;
- 		if(compt==10)
- 		{
- 			clearInterval(timerJump);
- 			compt=0;
- 		}
-
-
-
-		
-	
+    //On efface l'image précédente
+    Background();
+    
+    // personnage
+    context.drawImage(personnage.type,personnage.posx,personnage.posy,personnage.sizex,personnage.sizey);
+    // block ou il est possible de marcher
+    for (var i = 0; i < WalkableBlock.length; i++)
+    {
+        context.drawImage(WalkableBlock[i].type,WalkableBlock[i].posx,WalkableBlock[i].posy,WalkableBlock[i].sizex,WalkableBlock[i].sizey);
+    }
+    
+    //obstacle
+   for (var i = 0; i < obstacle.length; i++)
+    {
+        context.drawImage(obstacle[i].type,obstacle[i].posx,obstacle[i].posy,obstacle[i].sizex,obstacle[i].sizey);
+    }
+    
+    setTimeout(Scroll,15);
 }
+Draw();
+    
+    
+function Scroll()
+    {
+        
+    // Personnage
+        //Mouvement personnage
+    if (ct%10 == 1 && saut == false)
+    {
+    // ct%x = vitesse du personnage
+    ct = 1;
+    // modification du cycle de mouvement
+     if ((ctp%4)+1 == 1) {personnage.sizex = 24;};
+    if ((ctp%4)+1 == 2) {personnage.sizex = 45;};
+    if ((ctp%4)+1 == 3) {personnage.sizex = 24;};
+    if ((ctp%4)+1 == 4) {personnage.sizex = 52;};
+     personnage.type = index[(ctp%4)+1];
+    ctp++;
+    }
+        
+    if (saut == true)
+    {
+        Jump();
+    }
+    
+    //sol
+        WalkableBlock[0].posx = WalkableBlock[0].posx - patate;
+      WalkableBlock[0].posx = WalkableBlock[0].posx%30;
+    
+        
+    //on calcule les nouveaux blocks
+     //obstacle
+       Obstacle();
+    //block
+        WBlock();
+    //on bouge les obstacle
+    for (var i = 0; i < obstacle.length; i++)
+    {
+        obstacle[i].posx -= patate;
+    }
+    // on bouge les blocks hors sol
+    for (var i = 1; i < WalkableBlock.length; i++)
+    {
+        WalkableBlock[i].posx -= patate;
+    }
+    // On applique le moteur physique 
+    Physique();
+    // On redessine 
+    ct++;
+    Draw();
+    }
+    
+    
+function Jump() {
 
-function control(e)
+    ctsaut++;
+    personnage.type = index[5];
+    personnage.sizex = 45;
+    if (ctsaut != 0) {
+        saut = true;
+    }
+    
+    if (ctsaut < 60) {
+        personnage.posy -= 2.5;
+    } 
+     else if (ctsaut == 115) {
+        saut = false;
+        personnage.type = index[1];
+        personnage.sizex = 24;
+        ctsaut = 0;
+    }
+}
+document.addEventListener("keydown",function (e) { if (e.keyCode == 32) { if(saut == false) {Jump();} }}, false);
+    
+    
+function Obstacle()
 {
-	
-
-	if( e.keyCode == 38 )
-		    {
-		    	timerJump = setInterval(function() { jump() }, 75);
-		       
-		    }
-
+    // on supprime les obstacles hors de l'écran
+    for (var i = 0;  i < obstacle.length; i++)
+    {
+        if (obstacle[i].posx < -block)
+        {
+            obstacle.shift();
+        }
+    }
+    var random = Math.floor(Math.random()*1000)+1;
+    if (random > lvlfrequence)
+    {
+    var Nobstacle = new physicObj(canvas.width+block,PosSol-block,block,block,index[11],1);
+    if (obstacle.length == 0)
+        {
+            obstacle.push(Nobstacle);
+        }
+    else if(Nobstacle.posx - obstacle[obstacle.length-1].posx >120)
+        {
+        obstacle.push(Nobstacle);
+        }
+    }
 }
+function WBlock()
+{
+            // on supprime les blocks ou l'on peut marcher qui sont hors de l'écran
+    for (var i = 1;  i < WalkableBlock.length; i++)
+    {
+     if (WalkableBlock[i].posx < -50)
+        {
+           WalkableBlock.splice(i,1);
+        }
+    }
+    var random = Math.floor(Math.random()*1000)+1;
+    if (random > lvlfrequence)
+    {
+    var Wblock = new physicObj(canvas.width+block,PosSol-block,90,30,index[10],0);
+    if (WalkableBlock.length == 1)
+        {
+           WalkableBlock.push(Wblock);
+        }
+    else if (WalkableBlock.length >= 1 && Wblock.posx - WalkableBlock[WalkableBlock.length-1].posx > 120)
+        {
+            WalkableBlock.push(Wblock);
+        }
+    }
+}
+ 
+    
+function Physique() {
+
+
+        //gravité   
+        // si le personnage est sur un block ou il peut marcher
+        for (var i = 1; i < WalkableBlock.length; i++) {
+            if ((personnage.posy + personnage.sizey) != 390) {
+                if ((personnage.posx <= WalkableBlock[i].posx) && (personnage.posx + personnage.sizex <= WalkableBlock[i].posx + WalkableBlock[i].sizex)) {
+                    if(saut == true && ctsaut >60)
+                    {
+                        personnage.posy += 2.5
+                        if (personnage.posy == PosSol)
+                        { ctsaut = 114;}
+                    }
+                    else if (saut == false)
+                    {
+                        personnage.posy += 2.5;
+                        if (personnage.posy == PosSol)
+                        { ctsaut = 114;}
+                    }
+                    
+                } else {
+                    if ((WalkableBlock[i].posy) - (personnage.posy + personnage.sizey) <= 2.5) {
+                        personnage.posy = WalkableBlock[i].posy - personnage.sizey;
+                        ctsaut= 114;
+                }
+
+            }
+        }
+        }
+    
+    
+    //test de collision avec un obtacle
+        //on vérifie d'abord la présence d'obstacle sur le plateau
+        if(obstacle.length != 0)
+        {
+            // on test seulement les obstacles susceptible d'entrer en collision le 2 premier du tableau car l'espacement minimal est de 4block
+            for (var i = 0; i < 1; i++)
+            {
+                if ( personnage.posx <= obstacle[i].posx && (personnage.posx+personnage.sizex) >= obstacle[i].posx)
+                {
+                    // et que le point le plus bas est dans l'obstacle
+                    if (personnage.posy+personnage.sizey > obstacle[i].posy)
+                    {
+                    GameLost == true;
+                    }
+                }
+            }
+        }
+        
+        
+        
+    }
+        
+});

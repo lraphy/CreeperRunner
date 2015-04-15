@@ -5,6 +5,7 @@ $(document).ready(function () {
     var block = 30;
     var PosSol = canvas.height - 30;
     var WalkableBlock = new Array();
+    var ForRealtyOnly = new Array();
     var obstacle = new Array();
     var index = new Array;
     index[10] = $("#dirt")[0];
@@ -39,13 +40,12 @@ $(document).ready(function () {
         this.sizex = sizex;
         this.sizey = sizey;
         this.type = type;
-        this.collision = collision;
     }
 
 
     // définition des objets statiques
-    WalkableBlock[0] = new physicObj(0, PosSol, (block * NumberOfWidthBlock) + decalage, block, index[10], 0);
-    var personnage = new physicObj(block * 3, PosSol - 60, 24, 60, index[1], 1);
+    WalkableBlock[0] = new physicObj(0, PosSol, (block * NumberOfWidthBlock) + decalage, block, index[10]);
+    var personnage = new physicObj(block * 3, PosSol - 60, 24, 60, index[1]);
 
 
     function Background() {
@@ -72,6 +72,11 @@ $(document).ready(function () {
         // personnage
         context.drawImage(personnage.type, personnage.posx, personnage.posy, personnage.sizex, personnage.sizey);
         // block ou il est possible de marcher
+        
+        for (var i = 0; i < ForRealtyOnly.length; i++) {
+            context.drawImage(ForRealtyOnly[i].type, ForRealtyOnly[i].posx, ForRealtyOnly[i].posy, ForRealtyOnly[i].sizex, ForRealtyOnly[i].sizey);
+        }
+
         for (var i = 0; i < WalkableBlock.length; i++) {
             context.drawImage(WalkableBlock[i].type, WalkableBlock[i].posx, WalkableBlock[i].posy, WalkableBlock[i].sizex, WalkableBlock[i].sizey);
         }
@@ -124,6 +129,10 @@ $(document).ready(function () {
         //block
         WBlock();
         //on bouge les obstacle
+        Dematerialize();
+        for (var i = 0; i < ForRealtyOnly.length; i++) {
+            ForRealtyOnly[i].posx -= patate;
+        }
         for (var i = 0; i < obstacle.length; i++) {
             obstacle[i].posx -= patate;
         }
@@ -185,6 +194,15 @@ $(document).ready(function () {
         }
     }, false);
 
+function Dematerialize()
+    {
+        for (var i = 0; i < ForRealtyOnly.length; i++) {
+            if (ForRealtyOnly[i].posx < -block*3) {
+                ForRealtyOnly.shift();
+            }
+        }
+    }
+        
 
   function Obstacle() {
         // on supprime les obstacles hors de l'écran
@@ -193,6 +211,17 @@ $(document).ready(function () {
                 obstacle.shift();
             }
         }
+      
+      
+      // une variable typique pour créer un objet 
+      // respectivement posX,poY,SizeX,SizeY,Image
+    //  var Nobstacle = new physicObj(canvas.width + block, PosSol - block, block, block, index[11], 1);
+      // tu peux créer des "motifs en ajoutant des succession d'entré prédéfinie à la suite dans un tableau ou bien faire 
+      // l'aute fonctionne de même manière j'applique juste aux objets de ce tableau une physique différente
+      // /!\ le sol reste toujours à l'index 0 du tableau Walkableblock
+      // variable block pour définir ta largeur / hauteur de block
+      
+      /* ancient ajout random d'obstacle
         var random = Math.floor(Math.random() * 1000) + 1;
         if (random > lvlfrequence) {
             var Nobstacle = new physicObj(canvas.width + block, PosSol - block, block, block, index[11], 1);
@@ -201,25 +230,30 @@ $(document).ready(function () {
             } else if (Nobstacle.posx - obstacle[obstacle.length - 1].posx > 120) {
                 obstacle.push(Nobstacle);
             }
+          
+            
         }
+        */    
    }
 
     function WBlock() {
         // on supprime les blocks ou l'on peut marcher qui sont hors de l'écran
         for (var i = 1; i < WalkableBlock.length; i++) {
-            if (WalkableBlock[i].posx < -50) {
+            if (WalkableBlock[i].posx < 20) {
+                //dématérialise le block 
+                 ForRealtyOnly.push(WalkableBlock[i]);
                 WalkableBlock.splice(i, 1);
+                
             }
         }
-        var random = Math.floor(Math.random() * 1000) + 1;
-        if (random > lvlfrequence) {
             var Wblock = new physicObj(canvas.width + block, PosSol - block, 90, 30, index[10], 0);
+            var Wblock1 = new physicObj(canvas.width + block*4, PosSol - block*2,90 , 30, index[10], 0);
             if (WalkableBlock.length == 1) {
                 WalkableBlock.push(Wblock);
+                WalkableBlock.push(Wblock1);
             } else if (WalkableBlock.length >= 1 && Wblock.posx - WalkableBlock[WalkableBlock.length - 1].posx > 120) {
                 WalkableBlock.push(Wblock);
             }
-        }
     }
 
 
@@ -228,13 +262,13 @@ $(document).ready(function () {
 
         //gravité   
         // si le personnage est sur un block ou il peut marcher
+        var testfor = 1
         if (WalkableBlock.length >= 2)
         {
-         var inblocky = ((personnage.posx+24 <= WalkableBlock[1].posx + WalkableBlock[1].sizex + 24) && (personnage.posx+24 >= WalkableBlock[1].posx));
-         var inblockx = ((personnage.posx <= WalkableBlock[1].posx + WalkableBlock[1].sizex) && (personnage.posx >= WalkableBlock[1].posx));
+         var inblock = ((personnage.posx+24 <= WalkableBlock[1].posx + WalkableBlock[1].sizex + 24) && (personnage.posx+24 >= WalkableBlock[1].posx));
                
                 
-                if (inblocky) {
+                if (inblock) {
                         currentfloor = WalkableBlock[1].posy;
                         }
             
@@ -243,7 +277,7 @@ $(document).ready(function () {
                         currentfloor = 390;
                         if (personnage.posy+personnage.sizey != currentfloor && saut == false)
                         {
-                            personnage.posy += 5;
+                            personnage.posy += 2.5;
                         }
                     }
                 }
@@ -253,9 +287,6 @@ $(document).ready(function () {
                 {
                     if ((personnage.posy+personnage.sizey) > WalkableBlock[1].posy)
                     {
-                        console.log((personnage.posy+personnage.sizey));
-                        console.log(WalkableBlock[1].posy);
-                        console.log("Raphaëlle");
                         GameLost == true;
                 }
                 }

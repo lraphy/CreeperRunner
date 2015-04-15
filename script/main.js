@@ -33,7 +33,6 @@ $(document).ready(function () {
     var currentfloor = 390;
     var PhyCalculated = false;
 
-
     function physicObj(posx, posy, sizex, sizey, type, collision) {
         this.posx = posx;
         this.posy = posy;
@@ -121,8 +120,7 @@ $(document).ready(function () {
 
 
         //on calcule les nouveaux blocks
-        //obstacle
-        // Obstacle();
+        Obstacle();
         //block
         WBlock();
         //on bouge les obstacle
@@ -148,8 +146,11 @@ $(document).ready(function () {
     function Jump() {
 
         ctsaut++;
+        var courbe = 5;
         personnage.type = index[5];
         personnage.sizex = 45;
+
+        
         if (((personnage.posy+personnage.sizey) == currentfloor) && ctsaut >=60) {
             personnage.posy=currentfloor-personnage.sizey;
             saut = false;
@@ -159,12 +160,12 @@ $(document).ready(function () {
         }
         else {
         saut = true;
-        if (ctsaut < 60) {
-            personnage.posy -= 2.5;
+        if (ctsaut < 30) {
+            personnage.posy -= courbe;
         }
-        else if (ctsaut >= 60 && ((personnage.posy+personnage.sizey) != currentfloor))
+        else if (ctsaut >= 30  && ((personnage.posy+personnage.sizey) != currentfloor))
         {
-            personnage.posy += 2.5;
+            personnage.posy += courbe;
         }
         else if((personnage.posy+personnage.sizey) == currentfloor)
         {
@@ -175,6 +176,7 @@ $(document).ready(function () {
         }
         }
     }
+    
     document.addEventListener("keydown", function (e) {
         if (e.keyCode == 32) {
             if (saut == false) {
@@ -184,7 +186,7 @@ $(document).ready(function () {
     }, false);
 
 
- /*   function Obstacle() {
+  function Obstacle() {
         // on supprime les obstacles hors de l'écran
         for (var i = 0; i < obstacle.length; i++) {
             if (obstacle[i].posx < -block) {
@@ -200,7 +202,7 @@ $(document).ready(function () {
                 obstacle.push(Nobstacle);
             }
         }
-   }*/ 
+   }
 
     function WBlock() {
         // on supprime les blocks ou l'on peut marcher qui sont hors de l'écran
@@ -228,10 +230,11 @@ $(document).ready(function () {
         // si le personnage est sur un block ou il peut marcher
         if (WalkableBlock.length >= 2)
         {
-         var inblock = ((personnage.posx+24 <= WalkableBlock[1].posx + WalkableBlock[1].sizex + 24) && (personnage.posx+24 >= WalkableBlock[1].posx));
-            
+         var inblocky = ((personnage.posx+24 <= WalkableBlock[1].posx + WalkableBlock[1].sizex + 24) && (personnage.posx+24 >= WalkableBlock[1].posx));
+         var inblockx = ((personnage.posx <= WalkableBlock[1].posx + WalkableBlock[1].sizex) && (personnage.posx >= WalkableBlock[1].posx));
+               
                 
-                if (inblock) {
+                if (inblocky) {
                         currentfloor = WalkableBlock[1].posy;
                         }
             
@@ -240,11 +243,31 @@ $(document).ready(function () {
                         currentfloor = 390;
                         if (personnage.posy+personnage.sizey != currentfloor && saut == false)
                         {
-                            personnage.posy += 2.5;
+                            personnage.posy += 5;
                         }
                     }
                 }
-            }
+
+        
+                        if (((personnage.posx+personnage.sizex) >= WalkableBlock[1].posx && (personnage.posx + personnage.sizex) <= WalkableBlock[1].posx+WalkableBlock[1].sizex) || ((personnage.posx >= WalkableBlock[1].posx) && personnage.posx <= WalkableBlock[1].posx+WalkableBlock[1].sizex))
+                {
+                    if ((personnage.posy+personnage.sizey) > WalkableBlock[1].posy)
+                    {
+                        console.log((personnage.posy+personnage.sizey));
+                        console.log(WalkableBlock[1].posy);
+                        console.log("Raphaëlle");
+                        GameLost == true;
+                }
+                }
+        
+        }
+            
+            
+            
+        
+       
+        
+        
 
 
         //test de collision avec un obtacle
@@ -252,7 +275,7 @@ $(document).ready(function () {
         if (obstacle.length != 0) {
             // on test seulement les obstacles susceptible d'entrer en collision le 2 premier du tableau car l'espacement minimal est de 4block
             for (var i = 0; i < 1; i++) {
-                if (personnage.posx <= obstacle[i].posx && (personnage.posx + personnage.sizex) >= obstacle[i].posx) {
+                if (((personnage.posx+personnage.sizex) >= obstacle[i].posx && (personnage.posx + personnage.sizex) <= obstacle[i].posx+obstacle[i].sizex) || ((personnage.posx >= obstacle[i].posx) && personnage.posx <= obstacle[i].posx+obstacle[i].sizex)) {
                     // et que le point le plus bas est dans l'obstacle
                     if (personnage.posy + personnage.sizey > obstacle[i].posy) {
                         GameLost == true;

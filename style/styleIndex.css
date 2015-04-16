@@ -1,0 +1,198 @@
+body
+{
+    padding: 0;
+    margin: 0;
+}
+
+#container1
+{
+	background-image: url('../img/fond1.jpg');
+	background-size: cover;
+	background-position: center;
+	height: 850px;
+	width: 100%;
+	margin: auto;
+}
+
+#container2
+{
+	background-image: url('../img/fond2.jpg');
+	background-size: cover;
+	background-position: top;
+	font-size: 12pt;
+	font-family: Orator Std;
+	height: 1693px;
+	width: 100%;
+	margin: auto;
+	margin-top: -50px;
+}
+#container2 h3
+{
+	font-size: 22pt;
+    padding-bottom:30px;
+}
+
+#container3
+{
+	background-image: url('../img/fond3.jpg');
+	background-size: cover;
+	background-position: top;
+	height: 855px;
+	width: 100%;
+	margin: auto;
+}
+#logo
+{
+
+	position: relative;
+	display: block;
+	margin: auto;
+	top: 600px;
+	width: 375px;
+	height: 150px;
+	background-image: url('../img/runerLogo.png');
+	background-size: cover;
+	background-position: center;
+
+}
+#histoire
+{
+	color: #bdda8b;
+	text-align: center;
+	width: 100%;
+	max-width: 960px;
+	top: 300px;
+	position: relative;
+	margin: auto;
+	display: block;
+}
+#commentJouer
+{
+	position: relative;
+	margin: auto;
+	top: 320px;
+	width: 169px;
+	height: 119px;
+	background-image: url('../img/commentJouer.png');
+	background-size: cover;
+	background-position: center;
+
+}
+#touche
+{
+	width: 900px;
+	height: 29px;
+	position: relative;
+	margin: auto;
+	top: 340px;
+	padding-top: 25px;
+	padding-bottom: 25px;
+	background-image: url('../img/touche.jpg');
+	text-align: center;
+	color: #eec37c;
+	background-size: cover;
+	background-position: center;
+	font-size: 20pt;
+
+}
+#demoJeu
+{
+	display: block;
+	position: relative;
+	top: 450px;
+	width: 900px;
+	height:420px;
+	margin: auto;
+	border: solid 2px black;
+	background-image: url("../img/demoJeu.jpg");
+}
+#pioches
+{
+	display: block;
+	width:100%;
+	max-width: 1059px;
+	height: 94px;
+	margin: auto;
+	position: relative;
+    background-image: url('../img/pioches.png');
+    top: 900px;
+}
+.content1
+{
+	display: inline-block;
+	width: 270px;
+	margin-left: 15px;
+	margin-right: 15px;
+	vertical-align: top;
+	padding-top: 150px;
+	color: #c6e3fa;
+	text-align: left;
+	font-size: 12pt;
+	font-family: Orator Std;
+}
+.content1 h3
+{
+	font-size: 15pt;
+	color: #5febf8;
+	font-weight: none;
+	text-align: center;
+
+
+}
+.content1 span
+{
+	
+	font-size: 8pt;
+	display: block;
+	font-weight: none;	
+	padding: 0px;
+}
+.content1 a
+{
+    text-decoration: none;
+    color: #5febf8;
+}
+.row
+{
+	max-width: 950px;
+	width: 100%;
+	margin: auto;
+}
+.left
+{
+	float: left;
+	margin-right:20px;
+}
+#cochon
+{
+	background-image: url('../img/cochon-face.png');
+	width: 162px;
+	height:530px;
+	background-size: cover;
+	float: right;
+}
+
+#cochon:hover
+{
+	background-image: url('../img/cochon-dos.png');
+	width: 162px;
+	height:530px;
+	background-size: cover;
+	float: right;
+	
+}
+#tradeMark
+{
+	width: 100%;
+	text-align: center;
+	color: #c6e2f7;
+	padding-top: 180px;
+    font-size: 11pt;
+	font-family: Orator Std;
+}
+
+#tradeMark a
+{
+    color:#5de1eb;
+    text-decoration: none;
+}

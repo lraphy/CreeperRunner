@@ -13,6 +13,7 @@ $(document).ready(function () {
     var block = 30;
     var PosSol = canvas.height - block;
     var lvl = 1;
+    var level=1;
     
     //////////////////////////////////////
     
@@ -84,9 +85,9 @@ $(document).ready(function () {
     var VitesseMouvement = 5; // augmenter diminue la vitesse
     var VitesseSol = 2; 
     var VitesseSaut = 5;
-    var HauteurSaut = 20;
+    var HauteurSaut = 15;
     var VitesseBackground = 2;
-    var VitesseGlobale = 15; // augmenter diminue la vitesse 
+    var VitesseGlobale =10; // augmeer diminue la vitesse 
     
     ////////////////////////////
     
@@ -114,7 +115,7 @@ $(document).ready(function () {
     function Background() {
         
         context.drawImage(index[(lvl * 100)], X + reset, 0);
-        context.drawImage(index[(lvl * 100) + 1], Y + reset, 0);
+        context.drawImage(index[(lvl * 100)+1], Y + reset, 0);
 
         reset -= VitesseBackground;
         if (reset == -900) {
@@ -133,37 +134,51 @@ $(document).ready(function () {
         personnage.type = index[5];
         personnage.sizex = 45;
 
+console.log(currentfloor);
+console.log(personnage.posy);
 
-        if (((personnage.posy + personnage.sizey) == currentfloor) && ctsaut >= 60) {
-            personnage.posy = currentfloor - personnage.sizey;
-            saut = false;
-            personnage.type = index[1];
-            personnage.sizex = 24;
-            ctsaut = 0;
-        } else {
+      
             saut = true;
-            if (ctsaut < HauteurSaut) {
-                personnage.posy -= VitesseSaut;
-            } else if (ctsaut >= HauteurSaut && ((personnage.posy + personnage.sizey) != currentfloor)) {
-                personnage.posy += VitesseSaut;
-            } else if ((personnage.posy + personnage.sizey) == currentfloor) {
+            if (ctsaut < 1) {
+                 personnage.posy =  personnage.posy-(ctsaut*ctsaut/HauteurSaut);
+            } else if (((personnage.posy + personnage.sizey) < currentfloor)) {
+                personnage.posy =  personnage.posy+(ctsaut*ctsaut/HauteurSaut);
+                if ((personnage.posy + personnage.sizey) > currentfloor)
+                {
+                    personnage.posy=currentfloor-personnage.sizey;
+                }
+            } else if ((personnage.posy + personnage.sizey) >= currentfloor) {
                 saut = false;
+                
                 personnage.type = index[1];
                 personnage.sizex = 24;
-                ctsaut = 0;
+                personnage.posy=currentfloor-personnage.sizey;
             }
-        }
+        
     }
     
     
     // Récupération de l'événement si le joueur appuie sur la barre espace ou la flèche du haut
-        document.addEventListener("keydown", function (e) {
-        if (e.keyCode == 32 || e.keyCode == 38) {
-            if (saut == false) {
+        
+
+     
+    
+    
+    // Récupération de l'événement si le joueur appuie sur la barre espace ou la flèche du haut
+        document.addEventListener("keydown", control);
+
+function control(e)
+{
+    if (e.keyCode == 32 || e.keyCode == 38)
+    {
+        if (saut == false) 
+        {
+                ctsaut=-HauteurSaut;
                 Jump();
-            }
+                saut=true;
         }
-    }, false);
+    }
+}
 
 
 
@@ -247,15 +262,40 @@ $(document).ready(function () {
     
     function CalcScore()
     {
-        if (bonus !== 0)
+        if (bonus != 0)
         {
             score += 500;
             bonus = 0;
         }
         score++;
+        if(score%100==0&&level<5)
+        {
+            level++;
+            changeLevel();
+        }
     }
 
-    
+    function changeLevel()
+    {
+        VitesseSol ++; 
+        VitesseSaut ++;
+        HauteurSaut ++;
+        VitesseBackground ++;
+       
+        if (level==2)
+        {
+            document.getElementById('bg1').src='img/paysageminecraft3.jpg';
+            document.getElementById('bg2').src='img/paysageminecraft4.jpg';
+        }
+        else if (level==3)
+        {
+            document.getElementById('bg1').src='img/paysageminecraft5.jpg';
+            document.getElementById('bg2').src='img/paysageminecraft6.jpg';
+        }
+  
+
+
+    }
     
         
     // Application de la physique aux objets

@@ -82,7 +82,7 @@ $(document).ready(function () {
     
     // Variable de régulation
     var VitesseMouvement = 5; // augmenter diminue la vitesse
-    var VitesseSol = 5; 
+    var VitesseSol = 2; 
     var VitesseSaut = 5;
     var HauteurSaut = 20;
     var VitesseBackground = 2;
@@ -207,7 +207,7 @@ $(document).ready(function () {
         function WBlock() {
         // on supprime les blocks ou l'on peut marcher qui sont hors de l'écran
         for (var i = 1; i < WalkableBlock.length; i++) {
-            if (WalkableBlock[i].posx < 30) {
+            if (WalkableBlock[i].posx < 24) {
                 //dématérialise le block 
                 ForRealtyOnly.push(WalkableBlock[i]);
                 WalkableBlock.splice(i, 1);
@@ -274,30 +274,40 @@ $(document).ready(function () {
 
         //gestion de la gravité  
         // si le personnage est sur un block ou il peut marcher
-        var testfor = 1
-        if (WalkableBlock.length >= 2) {
-            var inblock = ((personnage.posx + 24 <= WalkableBlock[1].posx + WalkableBlock[1].sizex + 24) && (personnage.posx + 24 >= WalkableBlock[1].posx));
+         
+        var testfor = 1;
+        if (WalkableBlock.length >= 1) {
+            var inblock = (((personnage.posx +personnage.sizex-24 <= WalkableBlock[1].posx + WalkableBlock[1].sizex +24) && (personnage.posx +personnage.sizex >= WalkableBlock[1].posx)) );
 
 
             if (inblock) {
-                currentfloor = WalkableBlock[1].posy;
+                if (personnage.posy+personnage.sizey != currentfloor && saut == false)
+                {
+                      personnage.posy += 2.5;
+                }
+                 currentfloor = WalkableBlock[1].posy;
+                    
             } else {
                 {
                     currentfloor = 390;
                     if (personnage.posy + personnage.sizey != currentfloor && saut == false) {
                         personnage.posy += 2.5;
                     }
-                }
-            }
-
-            // gestion des collisions avec les block de type sol
-            if (((personnage.posx + personnage.sizex) >= WalkableBlock[1].posx && (personnage.posx + personnage.sizex) <= WalkableBlock[1].posx + WalkableBlock[1].sizex) || ((personnage.posx >= WalkableBlock[1].posx) && personnage.posx <= WalkableBlock[1].posx + WalkableBlock[1].sizex)) {
-                if ((personnage.posy + personnage.sizey) > WalkableBlock[1].posy) {
-                    GameLost == true;
+                    console.log("prout");
                 }
             }
 
         }
+        
+            // gestion des collisions avec les block de type sol
+        
+         if (WalkableBlock.length >= 1) {
+            if (inblock) {
+                if ((personnage.posy + personnage.sizey) > currentfloor) {
+                    GameLost == true;
+                }
+            }
+         }
 
         // gestion des objets
 

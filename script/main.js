@@ -222,10 +222,9 @@ function control(e)
         function WBlock() {
         // on supprime les blocks ou l'on peut marcher qui sont hors de l'écran
         for (var i = 1; i < WalkableBlock.length; i++) {
-            if (WalkableBlock[i].posx <= -90) {
+            if (WalkableBlock[i].posx < 24) {
                 //dématérialise le block 
                 ForRealtyOnly.push(WalkableBlock[i]);
-                console.log("spliced");
                 WalkableBlock.splice(i, 1);
 
             }
@@ -235,7 +234,7 @@ function control(e)
         if (WalkableBlock.length == 1) {
             WalkableBlock.push(Wblock);
             WalkableBlock.push(Wblock1);
-        } else if (WalkableBlock.length >= 1 && Wblock.posx - WalkableBlock[WalkableBlock.length - 1].posx > 110) {
+        } else if (WalkableBlock.length >= 1 && Wblock.posx - WalkableBlock[WalkableBlock.length - 1].posx > 120) {
             WalkableBlock.push(Wblock);
         }
     }
@@ -257,6 +256,16 @@ function control(e)
         
     }
     
+    
+    //Destruction des blocks de type sol immatériel
+    
+        function Dematerialize() {
+        for (var i = 0; i < ForRealtyOnly.length; i++) {
+            if (ForRealtyOnly[i].posx < -block * 3) {
+                ForRealtyOnly.shift();
+            }
+        }
+    }
 
     // Calcul du Score
     
@@ -268,7 +277,7 @@ function control(e)
             bonus = 0;
         }
         score++;
-        if(score%100==0&&level<5)
+        if(score%50==0&&level<5)
         {
             level++;
             changeLevel();
@@ -286,13 +295,26 @@ function control(e)
         {
             document.getElementById('bg1').src='img/paysageminecraft3.jpg';
             document.getElementById('bg2').src='img/paysageminecraft4.jpg';
+            document.getElementById('dirt').src='img/sol-sable.jpg';
         }
         else if (level==3)
         {
             document.getElementById('bg1').src='img/paysageminecraft5.jpg';
             document.getElementById('bg2').src='img/paysageminecraft6.jpg';
+            document.getElementById('dirt').src='img/sol-sable-crepuscule.jpg';
         }
-  
+        else if (level==4)
+        {
+            document.getElementById('bg1').src='img/paysageminecraft7.jpg';
+            document.getElementById('bg2').src='img/paysageminecraft8.jpg';
+            document.getElementById('dirt').src='img/sol-neige.jpg';
+        }
+        else 
+        {
+            document.getElementById('bg1').src='img/paysageminecraft9.jpg';
+            document.getElementById('bg2').src='img/paysageminecraft10.jpg';
+            document.getElementById('dirt').src='img/sol-nocturne.png';
+        }
 
 
     }
@@ -301,90 +323,44 @@ function control(e)
     // Application de la physique aux objets
 
     function Physique() {
-        
-                //gestion de la gravité  
+
+
+        //gestion de la gravité  
         // si le personnage est sur un block ou il peut marcher
          
+        var testfor = 1;
+        if (WalkableBlock.length >= 1) {
+            var inblock = (((personnage.posx +personnage.sizex-24 <= WalkableBlock[1].posx + WalkableBlock[1].sizex +24) && (personnage.posx +personnage.sizex >= WalkableBlock[1].posx)) );
 
-        if (WalkableBlock.length >= 2) {
-            var inblock = ((personnage.posx+personnage.sizex >= WalkableBlock[1].posx ) && (personnage.posx <= WalkableBlock[1].posx+WalkableBlock[1].sizex));
-            var inblock2 = ((personnage.posx+personnage.sizex >= WalkableBlock[2].posx ) && (personnage.posx <= WalkableBlock[2].posx+WalkableBlock[2].sizex));
-            var dans2block = (personnage.posx <= WalkableBlock[1].posx+WalkableBlock[1].sizex) && (personnage.posx+personnage.sizex >= WalkableBlock[2].posx);
-            var pieddroitdansblock1 = (personnage.posx+personnage.sizex > WalkableBlock[1].posx) && (personnage.posx+personnage.sizex < WalkableBlock[2].posx);
-            var pieddroitdansblock2 = (personnage.posx+personnage.sizex > WalkableBlock[2].posx );
-            
-            if (dans2block)
-            {
-                console.log("yes");
-                if (pieddroitdansblock1)
-                {
-                    currentfloor = WalkableBlock[1].posy;
-                     if (saut == false && personnage.posy+personnage.sizey != currentfloor)
-                {
-                 personnage.posy += 2.5;
-                    console.log("fuck3");
-                }
-                }
-                if (pieddroitdansblock2)
-                {
-                    console.log("oui");
-                     currentfloor = WalkableBlock[2].posy;
-                     if (saut == false && personnage.posy+personnage.sizey != currentfloor)
-                {
-                    
-                 personnage.posy += 2.5;
-                    console.log("fuck4");
-                }
-                }
-                
-            }
 
-            else if (pieddroitdansblock1) {
-                
-                currentfloor = WalkableBlock[1].posy;
-                if (saut == false && personnage.posy+personnage.sizey != currentfloor)
+            if (inblock) {
+                if (personnage.posy+personnage.sizey != currentfloor && saut == false)
                 {
-                 personnage.posy += 2.5;
-                    console.log("fuck1");
+                      personnage.posy += 2.5;
                 }
+                 currentfloor = WalkableBlock[1].posy;
                     
-            } 
-            else if (pieddroitdansblock2)
-            {
-                currentfloor = WalkableBlock[2].posy;
-                if (saut == false && personnage.posy+personnage.sizey != currentfloor)
-                {
-                 personnage.posy += 2.5;
-                     console.log("fuck2");
-                    
-            }
-            }
-
-            
-            else {
+            } else {
                 {
                     currentfloor = 390;
                     if (personnage.posy + personnage.sizey != currentfloor && saut == false) {
                         personnage.posy += 2.5;
-                        console.log("jesuisresponsable");
                     }
+                    console.log("prout");
                 }
             }
-        }
 
+        }
         
             // gestion des collisions avec les block de type sol
-         if (WalkableBlock.length >= 2) {
-            if (inblock || inblock2) {
-
+        
+         if (WalkableBlock.length >= 1) {
+            if (inblock) {
                 if ((personnage.posy + personnage.sizey) > currentfloor) {
                     GameLost == true;
                 }
             }
          }
-        
-            
-        
 
         // gestion des objets
 
@@ -424,15 +400,6 @@ function control(e)
     //Calcul de l'état de jeu N+1
     
      function Scroll() {
-         
-         
-        WBlock();
-        Physique();
-        ct++;   
-        CalcScore();
-         if (saut == true) {
-            Jump();
-        }
 
         // Personnage
         //Mouvement personnage
@@ -456,7 +423,9 @@ function control(e)
             ctp++;
         }
 
-
+        if (saut == true) {
+            Jump();
+        }
 
         //sol
         WalkableBlock[0].posx = WalkableBlock[0].posx - VitesseSol;
@@ -465,9 +434,14 @@ function control(e)
 
         //on calcule les nouveaux blocks
         Obstacle();
+        WBlock();
         ScoreBonusBlock();
+        Dematerialize();
         
         //on bouge les blocks
+        for (var i = 0; i < ForRealtyOnly.length; i++) {
+            ForRealtyOnly[i].posx -= VitesseSol;
+        }
         for (var i = 0; i < obstacle.length; i++) {
             obstacle[i].posx -= VitesseSol;
         }
@@ -477,7 +451,10 @@ function control(e)
         for (var i = 0; i < PickupObject.length; i++) {
             PickupObject[i].posx -= VitesseSol;
         }
-        // On applique le moteur physique
+        // On applique le moteur physique 
+        Physique();
+        ct++;   
+        CalcScore();
         Draw();
     }
 
@@ -492,6 +469,10 @@ function control(e)
         // personnage
         context.drawImage(personnage.type, personnage.posx, personnage.posy, personnage.sizex, personnage.sizey);
 
+        //Block dématérialisé
+        for (var i = 0; i < ForRealtyOnly.length; i++) {
+            context.drawImage(ForRealtyOnly[i].type, ForRealtyOnly[i].posx, ForRealtyOnly[i].posy, ForRealtyOnly[i].sizex, ForRealtyOnly[i].sizey);
+        }
         //Block de type sol 
         for (var i = 0; i < WalkableBlock.length; i++) {
             context.drawImage(WalkableBlock[i].type, WalkableBlock[i].posx, WalkableBlock[i].posy, WalkableBlock[i].sizex, WalkableBlock[i].sizey);

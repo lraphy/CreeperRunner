@@ -566,6 +566,6 @@ var overlaydiamand = new physicObj(10,70,115,48,index[15]);
          context.fillText(score,465,310);
         }
     }
-   Draw();
+    $("canvas").click(Draw);
 
 });

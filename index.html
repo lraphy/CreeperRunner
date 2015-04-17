@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CreeperRunner</title>
+    <link rel="stylesheet" type="text/css" href="style/styleIndex.css" />
+    <link rel="stylesheet" type="text/css" href="style/style.css" />
+    <link rel="icon" type="image/jpg" href="img/creeper_head2.jpg" />
+    <link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+</head>
+
+<body>
+	<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.3&appId=31015958557";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- Header -->
+		<div id="container1">
+		<a class='scrollTo' href="#commentJouer" id="logo"></a>
+	</div>
+
+<!-- Container -->
+	<div id="container2">
+		<div id="histoire">
+			<h3>Diamant et Crépitements</h3>
+			<p>Par un beau jour de printemps, Steve décida de prendre son courage (ou plutôt sa pioche) a deux mains et de pénétrer dans l’antre d’une caverne pour enfin trouver le saint graal : du diamant !</p>
+
+			<p>Il s’aventura dans les profondeurs ténébreuses de la terre et bientôt ses pas le menèrent devant un gisement de diamant tel que jamais Minecraftien n’avait vu.
+			Le jeune homme éprouva une joie immense, si grande qu’il croyait ne jamais s’en remettre. Après une éternité Steve se ressaisit et commença à miner activement. Ses bras s’affairait avec énergie et en quelques heures il avait récolté plus d’une centaine de diamant.</p> 
+
+			<p>Son attention était entièrement tournée vers son travail qu’il en oublia presque de rester sur ses gardes. C’est ainsi qu’il ne vit pas la forme d’un vert émeraude s’approcher, sortant de l’ombre. Il compris le danger qu’il encourait en entendant le crépitement caractéristique du creeper. Abandonnant son trésor il pris ses jambes a son coup, poursuivit par la créature.</p>
+
+			<p>Aide Steve à échapper au Creeper !</p>
+
+
+		</div>
+		<div id="commentJouer"></div>
+		<div id="touche">Appuie sur la flèche du haut pour sauter</div>
+		<div id="game">
+			<img src="img/sol.png" id="dirt" width="0" height="0"/>
+           <img src="img/sol-sable.jpg" id="sable" width="0" height="0"/>
+           <img src="img/sol-sable-crepuscule.jpg" id="crepuscule" width="0" height="0"/>
+           <img src="img/sol-neige.jpg" id="neige" width="0" height="0"/>
+           <img src="img/sol-nocturne.png" id="nocturne" width="0" height="0"/>
+		   <img src="img/steve0.png" id="steve1" width="0" height="0"/>
+		   <img src="img/steve1.png" id="steve2" width="0" height="0"/>
+		   <img src="img/steve2.png" id="steve3" width="0" height="0"/>
+		   <img src="img/stevesaut.png" id="steve4" width="0" height="0"/>
+		   <img src="img/tnt.jpg" id="tnt" width="0" height="0"/>
+		   <img src="img/blockpierre.jpg" id="pierre" width="0" height="0"/>
+		   <img src="img/diamand.png" id="diamand" width="0" height="0"/>
+		   <img src="img/dispdiamand.png" id="overlaydiamand" width="0" height="0"/>
+		   <img src="img/dispscore.png" id="overlayscore" width="0" height="0"/>
+		   <img src="img/perdu.png" id="overlayperdu" width="0" height="0"/>
+		    <img id="bg1" src="img/paysageminecraft1.png" width="0" height="0">
+		    <img id="bg2" src="img/paysageminecraft2.png" width="0" height="0">	    
+            <img id="bg3" src="img/paysageminecraft3.jpg" width="0" height="0">
+		    <img id="bg4" src="img/paysageminecraft4.jpg" width="0" height="0">	 
+            <img id="bg5" src="img/paysageminecraft5.jpg" width="0" height="0">
+		    <img id="bg6" src="img/paysageminecraft6.jpg" width="0" height="0">	 
+            <img id="bg7" src="img/paysageminecraft7.jpg" width="0" height="0">
+		    <img id="bg8" src="img/paysageminecraft8.jpg" width="0" height="0">	 
+            <img id="bg9" src="img/paysageminecraft9.jpg" width="0" height="0">
+		    <img id="bg10" src="img/paysageminecraft10.jpg" width="0" height="0">	 
+		    <canvas id="jeu" width="900" height="420">
+		    </canvas>
+		</div>
+		
+		
+
+		  
+    <div id='pioches'></div>
+    <div id="cochon" class='scrollTo' href="#container1"></div>
+	</div>
+	
+<!-- Footer -->
+	<div id="container3">
+			<div class="row">
+			<div class="content1">
+				<a href="https://www.facebook.com/creeperrunner"><img src="img/logo-fcbk.jpg" class="left" onmouseover='src="img/logo-fcbkhover.jpg"' onmouseout='src="img/logo-fcbk.jpg"'></a>
+				<h3>Rejoingez nous sur Facebook</h3>
+
+				<p>Parlez au autres fans de Creeper Runner sur Facebook en aimant notre page officielle.
+				<div class="fb-page" data-href="https://www.facebook.com/creeperrunner" data-width="180" data-height="150" data-hide-cover="false" data-show-facepile="true" data-show-posts="false" ><div class="fb-xfbml-parse-ignore"><blockquote cite="https://www.facebook.com/creeperrunner"><a href="https://www.facebook.com/creeperrunner">CreeperRunner</a></blockquote></div></div>
+
+				</p>
+				</br>
+				<p>Êtes-vous une personne utilisant Google Plus ? Voici le boutton!</p>
+				<div class="g-follow" data-href="https://plus.google.com/b/108028843185473593086/" data-rel="author"></div>
+
+			</div>
+			<div class="content1">
+
+					
+					<a href="https://twitter.com/CreeperRunner"><img src="img/twitter-logo.jpg" class="left" onmouseover='src="img/twitter-logohover.jpg"' onmouseout='src="img/twitter-logo.jpg"'></a>
+					<h3>Twitter / @CreeperRunner</h3>
+
+					<p>Vous pouvez également suivre Creeper Runner sur Twitter pour plus de nouvelles régulières et rapides.</p>
+
+					<a class="twitter-timeline" href="https://twitter.com/CreeperRunner" data-widget-id="588632889471864832">Tweets de @CreeperRunner</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+			</div>
+			<div class="content1">
+				<a href='http://creeperrunner.tumblr.com/'><img src="img/tumblr-logo.jpg" class="left" onmouseover='src="img/tumblr-logohover.jpg"' onmouseout='src="img/tumblr-logo.jpg"'></a>
+				<h3>Nouvelles de Creeper Runner</h3>
+                <p>Nous mettons à jour notre tumblog avec des articles annonçant toutes les nouvelles sur Creeper Runner.</p>
+                
+                <p><a href='http://creeperrunner.tumblr.com/post/116557799612/j-1' target="_blank">J-1</a>
+				<span>16 avril 2015</span></p>
+              
+                <p><a href='http://creeperrunner.tumblr.com/post/116545885022/diamant-et-crepitements' target="_blank">Diamant et Crépitements</a>
+				<span>16 avril 2015</span></p>           
+               
+                <p><a href="http://creeperrunner.tumblr.com/post/116469160082/le-nouveau-jeu-creeper-runner" target="_blank">Le nouveau jeu, Creeper Runner</a>
+				<span>15 avril 2015</span></p>
+
+
+			</div>
+			<div id="tradeMark">Mojang © 2009-2015. "Creeper Runner" is a trademark of Mojang AB — <a href="https://account.mojang.com/documents/minecraft_eula" target="_blank">Terms of Use</a> — <a href="https://account.mojang.com/terms#privacy" target="_blank">Privacy Policy</a></div>
+	</div>
+	</div>
+	
+<!-- scroll -->
+<script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'VT323::latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })(); </script>
+<script>
+	$(document).ready(function() {
+		$('.scrollTo').click( function() { // Au clic sur un élément
+			var page = $(this).attr('href'); // Page cible
+			var speed = 900; // Durée de l'animation (en ms)
+			$('html, body').animate( { scrollTop: $(page).offset().top }, speed ); // Go
+			return false;
+		});
+	});
+</script>
+    <script type="text/javascript"> function Launch()
+        {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "script/main.js"; 
+            document.getElementsByTagName("head")[0].appendChild(script);
+        }
+        </script>
+        <script src="script/main.js"></script>
+    
+</body>
+</html>

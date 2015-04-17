@@ -1,100 +1,129 @@
 $(document).ready(function () {
     
-    // récupération du canvas
     
+  
+
+    // récupération du canvas
+
     var canvas = $("#jeu")[0];
     var context = $("#jeu")[0].getContext("2d");
 
     ///////////////////////////////////////////
 
-    
+
     //Initialisation de variables globales
-    
+
     var block = 30;
     var PosSol = canvas.height - block;
-    var lvl = 1;
-    var level=1;
+    var solcube = 360;
+    var level = 1;
+    var diamandcount = 0;
+    var GameLost = false;
+    var meilleurscore = 0;
+    context.font = '20pt VT323';
     
+ 
+
     //////////////////////////////////////
-    
+
     // Stockage des images utilisés 
 
     var index = new Array();
-    
+
     // block commun
     index[10] = $("#dirt")[0];
+    index[20] = $("#sable")[0];
+    index[30] = $("#crepuscule")[0];
+    index[40] = $("#neige")[0];
+    index[50] = $("#nocturne")[0];
     index[11] = $("#tnt")[0];
-    index[12] = $("#coffre")[0];
+    index[12] = $("#pierre")[0];
+    index[13] = $("#diamand")[0];
+    index[14] = $("#overlayscore")[0];
+    index[15] = $("#overlaydiamand")[0];
+    index[16] = $("#overlayperdu")[0];
     
+
     //Mouvement du personnage
     index[1] = $("#steve1")[0];
     index[2] = $("#steve2")[0];
     index[3] = $("#steve1")[0];
     index[4] = $("#steve3")[0];
     index[5] = $("#steve4")[0];
-    
+
     //Background
     index[100] = $("#bg1")[0];
     index[101] = $("#bg2")[0];
-    
+    index[200] = $("#bg3")[0];
+    index[201] = $("#bg4")[0];
+    index[300] = $("#bg5")[0];
+    index[301] = $("#bg6")[0];
+    index[400] = $("#bg7")[0];
+    index[401] = $("#bg8")[0];
+    index[500] = $("#bg9")[0];
+    index[501] = $("#bg10")[0];
+
     ////////////////////////////////
-    
-    
+
+
     // Initialisation des tableaux contenants nos différends block
-    
+
     var PickupObject = new Array();
     var WalkableBlock = new Array();
-    var ForRealtyOnly = new Array();
     var obstacle = new Array();
-    
+    var Map = new Array();
+
     //////////////////////////////////
-    
+
     // Initialisation des variables pour la fonction Background
-    
+
     var X = 0;
     var Y = 900;
     var reset = 0;
-    
+
     //////////////////////////////////
-    
+
     // Initialisation des variables pour le mouvement du personnage
-    
+
     var ct = 0;
     var ctp = 0;
-    
+
     /////////////////////////////////
-    
+
     // Initialisation des variables pour la fonction saut
     var saut = false;
     var ctsaut = 0;
-    
+
     /////////////////////////////////
-    
+
     // Initialisation des variables pour la physique
     var currentfloor = 390;
-    
+
     ////////////////////////////////
-    
+
     //Initialisation des variable pour le score
     var bonus = 0;
     var score = 0;
-    
+
     //////////////////////////////
-    
+
     // Variable de régulation
-    var VitesseMouvement = 5; // augmenter diminue la vitesse
-    var VitesseSol = 2; 
-    var VitesseSaut = 5;
+    var VitesseMouvement = 15; // augmenter diminue la vitesse
+    var VitesseSol = 1;
+    var VitesseSaut = 0.4;
     var HauteurSaut = 15;
     var VitesseBackground = 2;
-    var VitesseGlobale =10; // augmeer diminue la vitesse 
-    
+    var VitesseGlobale = 10; // augmenter diminue la vitesse 
+    var Gravite = 5;
+    // fréquence block
+    var waitthis = 730;
+    var waitthistnt = 200;
+    var waitthispickup = 500;
+
     ////////////////////////////
-    
-    
-    
+
     // la fonction définie les objets
-    
+
     function physicObj(posx, posy, sizex, sizey, type, collision) {
         this.posx = posx;
         this.posy = posy;
@@ -105,17 +134,19 @@ $(document).ready(function () {
 
 
     // définition des objets statiques
-    WalkableBlock[0] = new physicObj(0, PosSol, (canvas.width) + block, block, index[10]);
-    var personnage = new physicObj(block * 3, PosSol - block*2, 24, 60, index[1]);
+    var personnage = new physicObj(block * 3, PosSol - block * 2, 54, 60, index[1]);
+Map[0] = new physicObj(0, PosSol, (canvas.width) + block, block, index[level*10]);
+var overlayscore = new physicObj(10,10,180,48,index[14]);
+var overlaydiamand = new physicObj(10,70,115,48,index[15]);
 
 
-    
+
+
     // Affiche et fait défiler l'arrière plan
-    
+
     function Background() {
-        
-        context.drawImage(index[(lvl * 100)], X + reset, 0);
-        context.drawImage(index[(lvl * 100)+1], Y + reset, 0);
+        context.drawImage(index[level * 100], X + reset, 0);
+        context.drawImage(index[level * 100 + 1], Y + reset, 0);
 
         reset -= VitesseBackground;
         if (reset == -900) {
@@ -124,254 +155,295 @@ $(document).ready(function () {
             Y = tmp;
         }
         reset = reset % 900;
-        
+
     }
-    
-    // Modification des coordonnées du personnage lors d'un saut
+
+
     function Jump() {
 
-        ctsaut++;
+        ctsaut+= VitesseSaut;
         personnage.type = index[5];
-        personnage.sizex = 45;
+        personnage.sizex = 48;
 
-console.log(currentfloor);
-console.log(personnage.posy);
-
-      
-            saut = true;
-            if (ctsaut < 1) {
-                 personnage.posy =  personnage.posy-(ctsaut*ctsaut/HauteurSaut);
-            } else if (((personnage.posy + personnage.sizey) < currentfloor)) {
-                personnage.posy =  personnage.posy+(ctsaut*ctsaut/HauteurSaut);
-                if ((personnage.posy + personnage.sizey) > currentfloor)
-                {
-                    personnage.posy=currentfloor-personnage.sizey;
-                }
-            } else if ((personnage.posy + personnage.sizey) >= currentfloor) {
-                saut = false;
-                
-                personnage.type = index[1];
-                personnage.sizex = 24;
-                personnage.posy=currentfloor-personnage.sizey;
+        saut = true;
+        if (ctsaut < 1) {
+            personnage.posy = personnage.posy - (ctsaut * ctsaut / HauteurSaut);
+        } else if (((personnage.posy + personnage.sizey) < currentfloor)) {
+            personnage.posy = personnage.posy + (ctsaut * ctsaut / HauteurSaut);
+            if ((personnage.posy + personnage.sizey) > currentfloor) {
+                personnage.posy = currentfloor - personnage.sizey;
             }
-        
+        } else if ((personnage.posy + personnage.sizey) >= currentfloor) {
+            saut = false;
+
+            personnage.type = index[1];
+            personnage.sizex = 52;
+            personnage.posy = currentfloor - personnage.sizey;
+        }
+
     }
-    
-    
-    // Récupération de l'événement si le joueur appuie sur la barre espace ou la flèche du haut
-        
 
-     
-    
-    
-    // Récupération de l'événement si le joueur appuie sur la barre espace ou la flèche du haut
-        document.addEventListener("keydown", control);
+    document.addEventListener("keydown", control);
 
-function control(e)
-{
-    if (e.keyCode == 32 || e.keyCode == 38)
-    {
-        if (saut == false) 
-        {
-                ctsaut=-HauteurSaut;
+    function control(e) {
+        if (e.keyCode == 32 || e.keyCode == 38) {
+             e.preventDefault();
+            if (saut == false) {
+                ctsaut = -HauteurSaut;
                 Jump();
-                saut=true;
+                saut = true;
+            }
         }
     }
-}
 
 
 
-    
+
+
+
+
     // Calcul des obstacles
-    
+
     function Obstacle() {
         // on supprime les obstacles hors de l'écran
         for (var i = 0; i < obstacle.length; i++) {
             if (obstacle[i].posx < -block) {
                 obstacle.shift();
             }
+            }
+        
+        var random = Math.floor(Math.random()*300)+1;
+            
+            if (obstacle.length == 0)
+            {
+
+                if (random <5)
+                {
+                var Nobs = new physicObj(canvas.width + block, solcube-block, 30, 30, index[11], 0);
+                obstacle.push(Nobs);
+                Map.push(Nobs);
+                }
+                
+            }
+            else if (obstacle[obstacle.length - 1].posx <= waitthistnt)
+            {
+                  if (random <100)
+                {
+                var Nobs = new physicObj(canvas.width + block, solcube-block, 30, 30, index[11], 0);
+                obstacle.push(Nobs);
+                Map.push(Nobs);
+                }
+            
         }
 
-
-        // une variable typique pour créer un objet 
-        // respectivement posX,poY,SizeX,SizeY,Image
-        //  var Nobstacle = new physicObj(canvas.width + block, PosSol - block, block, block, index[11], 1);
-        // tu peux créer des "motifs en ajoutant des succession d'entré prédéfinie à la suite dans un tableau ou bien faire 
-        // l'aute fonctionne de même manière j'applique juste aux objets de ce tableau une physique différente
-        // /!\ le sol reste toujours à l'index 0 du tableau Walkableblock
-        // variable block pour définir ta largeur / hauteur de block
-
-        /* ancient ajout random d'obstacle
-          var random = Math.floor(Math.random() * 1000) + 1;
-          if (random > lvlfrequence) {
-              var Nobstacle = new physicObj(canvas.width + block, PosSol - block, block, block, index[11], 1);
-              if (obstacle.length == 0) {
-                  obstacle.push(Nobstacle);
-              } else if (Nobstacle.posx - obstacle[obstacle.length - 1].posx > 120) {
-                  obstacle.push(Nobstacle);
-              }
-            
-              
-          }
-          */
     }
-    
+
     //Calcul des blocks de type sol
-    
-        function WBlock() {
-        // on supprime les blocks ou l'on peut marcher qui sont hors de l'écran
-        for (var i = 1; i < WalkableBlock.length; i++) {
-            if (WalkableBlock[i].posx < 24) {
-                //dématérialise le block 
-                ForRealtyOnly.push(WalkableBlock[i]);
-                WalkableBlock.splice(i, 1);
+
+    function WaBlock() {
+        
+ psolcube = solcube;
+        for (var i = 0; i < WalkableBlock.length; i++) {
+            if (WalkableBlock[i].posx <= -252) {
+                WalkableBlock.shift();
+            }
+        }
+        var Wblock = new physicObj(canvas.width + block, solcube, 200, 30, index[12], 0);
+        if (WalkableBlock.length > 0) {
+            if (WalkableBlock[WalkableBlock.length - 1].posx <= waitthis) {
+
+                var random = Math.floor(Math.random() * 100);
+
+
+                if (random > 50) {
+                    if ((solcube - block) > 30) {
+                        solcube -= block;
+                    }
+                } else if (random <= 50) {
+                    
+                    if (solcube + block == 390)
+                    {
+                    solcube =390;
+                    }
+                    if (solcube + block < 390) {
+                        solcube += block;
+                    }
+                }
+                if (solcube == 390)
+                {
+                    waitthis -=200
+                }
+                else
+                {
+                var Wblock = new physicObj(canvas.width + block, solcube, 200, 30, index[12], 0);
+                WalkableBlock.push(Wblock);
+                Map.push(Wblock);
+                waitthis = 730;
+                }
 
             }
         }
-        var Wblock = new physicObj(canvas.width + block, PosSol - block, 90, 30, index[10], 0);
-        var Wblock1 = new physicObj(canvas.width + block * 4, PosSol - block * 2, 90, 30, index[10], 0);
-        if (WalkableBlock.length == 1) {
+         else {
             WalkableBlock.push(Wblock);
-            WalkableBlock.push(Wblock1);
-        } else if (WalkableBlock.length >= 1 && Wblock.posx - WalkableBlock[WalkableBlock.length - 1].posx > 120) {
-            WalkableBlock.push(Wblock);
+            Map.push(Wblock);
         }
+
     }
-    
+
     //Calcul des blocks de apportant un bonus de Score
-        function ScoreBonusBlock()
-    {
+    function ScoreBonusBlock() {
         for (var i = 0; i < PickupObject.length; i++) {
             if (PickupObject[i].posx < -block) {
                 PickupObject.shift();
             }
         }
-              var Diamant = new physicObj(canvas.width + block, 200, block, block, index[12], 2);
-              if (PickupObject.length == 0) {
-                  PickupObject.push(Diamant);
-              } else if (Diamant.posx - PickupObject[PickupObject.length - 1].posx > 400) {
-                  PickupObject.push(Diamant);
-              }
         
-    }
-    
-    
-    //Destruction des blocks de type sol immatériel
-    
-        function Dematerialize() {
-        for (var i = 0; i < ForRealtyOnly.length; i++) {
-            if (ForRealtyOnly[i].posx < -block * 3) {
-                ForRealtyOnly.shift();
+        var random = Math.floor(Math.random()*300)+1;
+            
+            if (PickupObject.length == 0)
+            {
+
+                if (random <5)
+                {
+                var Npickup = new physicObj(canvas.width + block, solcube-block*5, 30, 30, index[13], 0);
+                PickupObject.push(Npickup);
+                }
+                
             }
-        }
+            else if (PickupObject[PickupObject.length - 1].posx <= waitthispickup)
+            {
+                  if (random <100)
+                {
+                var Npickup = new physicObj(canvas.width + block, solcube-block*5, 30, 30, index[13], 0);
+                PickupObject.push(Npickup);
+                }
+
+    }
     }
 
-    // Calcul du Score
-    
-    function CalcScore()
-    {
-        if (bonus != 0)
-        {
+    // Calcul du score
+    function CalcScore() {
+           
+        score++;
+        if (bonus != 0) {
             score += 500;
             bonus = 0;
         }
-        score++;
-        if(score%50==0&&level<5)
-        {
-            level++;
-            changeLevel();
-        }
-    }
+        if (score >= 2000 && score <= 4000 ) {
+            level = 2;
+          VitesseSol = 1.25;
+          VitesseSaut = 0.5
+          HauteurSaut = 17;
+        VitesseMouvement = 13;
 
-    function changeLevel()
-    {
-        VitesseSol ++; 
-        VitesseSaut ++;
-        HauteurSaut ++;
-        VitesseBackground ++;
-       
-        if (level==2)
-        {
-            document.getElementById('bg1').src='img/paysageminecraft3.jpg';
-            document.getElementById('bg2').src='img/paysageminecraft4.jpg';
-            document.getElementById('dirt').src='img/sol-sable.jpg';
         }
-        else if (level==3)
-        {
-            document.getElementById('bg1').src='img/paysageminecraft5.jpg';
-            document.getElementById('bg2').src='img/paysageminecraft6.jpg';
-            document.getElementById('dirt').src='img/sol-sable-crepuscule.jpg';
+        else if (score >= 4000 && score <= 6000) {
+            level = 3;
+         VitesseSol = 1.5;
+          VitesseSaut = 0.6;
+          HauteurSaut = 17;
+            VitesseMouvement = 11;
         }
-        else if (level==4)
-        {
-            document.getElementById('bg1').src='img/paysageminecraft7.jpg';
-            document.getElementById('bg2').src='img/paysageminecraft8.jpg';
-            document.getElementById('dirt').src='img/sol-neige.jpg';
+        else if (score >= 6000 && score <= 8000) {
+            level = 4;
+        VitesseSol = 2;
+          VitesseSaut = 0.7;
+          HauteurSaut = 20;
+            VitesseMouvement = 9;
         }
-        else 
-        {
-            document.getElementById('bg1').src='img/paysageminecraft9.jpg';
-            document.getElementById('bg2').src='img/paysageminecraft10.jpg';
-            document.getElementById('dirt').src='img/sol-nocturne.png';
+        else if (score >= 8000) {
+        VitesseMouvement = 9;
+         level = 5;
+          VitesseSol = 2;
+          VitesseSaut = 0.8;
+          HauteurSaut = 25;
         }
-
-
-    }
+        }
     
-        
+
+
+
+
     // Application de la physique aux objets
 
     function Physique() {
 
-
         //gestion de la gravité  
         // si le personnage est sur un block ou il peut marcher
-         
-        var testfor = 1;
-        if (WalkableBlock.length >= 1) {
-            var inblock = (((personnage.posx +personnage.sizex-24 <= WalkableBlock[1].posx + WalkableBlock[1].sizex +24) && (personnage.posx +personnage.sizex >= WalkableBlock[1].posx)) );
 
 
-            if (inblock) {
-                if (personnage.posy+personnage.sizey != currentfloor && saut == false)
-                {
-                      personnage.posy += 2.5;
+        if (WalkableBlock.length >= 2) {
+            var inblock = ((personnage.posx + personnage.sizex >= WalkableBlock[0].posx) && (personnage.posx <= WalkableBlock[0].posx + WalkableBlock[0].sizex));
+            var inblock2 = ((personnage.posx + personnage.sizex >= WalkableBlock[1].posx) && (personnage.posx <= WalkableBlock[1].posx + WalkableBlock[1].sizex));
+            var dans2block = (personnage.posx <= WalkableBlock[0].posx + WalkableBlock[0].sizex) && (personnage.posx + personnage.sizex >= WalkableBlock[1].posx);
+            var pieddroitdansblock1 = (personnage.posx + personnage.sizex > WalkableBlock[0].posx) && (personnage.posx + personnage.sizex < WalkableBlock[1].posx);
+            var pieddroitdansblock2 = (personnage.posx+30 > WalkableBlock[1].posx);
+
+            if (dans2block) {
+                if (pieddroitdansblock1) {
+                    currentfloor = WalkableBlock[0].posy;
+                    if (saut == false && personnage.posy + personnage.sizey != currentfloor) {
+                        personnage.posy += Gravite;
+                    }
                 }
-                 currentfloor = WalkableBlock[1].posy;
-                    
+                if (pieddroitdansblock2) {
+                    currentfloor = WalkableBlock[1].posy;
+                    if (saut == false && personnage.posy + personnage.sizey != currentfloor) {
+
+                        personnage.posy += Gravite;
+                        }
+                    }
+                }
+
+             else if (inblock) {
+
+                currentfloor = WalkableBlock[0].posy;
+                if (saut == false && personnage.posy + personnage.sizey != currentfloor) {
+                    personnage.posy += Gravite;
+                }
+
+            } else if (inblock2) {
+                currentfloor = WalkableBlock[1].posy;
+                if (saut == false && personnage.posy + personnage.sizey != currentfloor) {
+                    personnage.posy += Gravite;
+                }
             } else {
                 {
                     currentfloor = 390;
                     if (personnage.posy + personnage.sizey != currentfloor && saut == false) {
-                        personnage.posy += 2.5;
+                        personnage.posy += Gravite;
                     }
-                    console.log("prout");
                 }
             }
-
         }
-        
-            // gestion des collisions avec les block de type sol
-        
-         if (WalkableBlock.length >= 1) {
-            if (inblock) {
+
+
+        // gestion des collisions avec les block de type sol
+        if (WalkableBlock.length >= 2) {
+            if (inblock || inblock2) {
+
                 if ((personnage.posy + personnage.sizey) > currentfloor) {
-                    GameLost == true;
+                    GameLost = true;
+                }
+
                 }
             }
-         }
+        
+    
+
+
+
 
         // gestion des objets
 
         if (PickupObject.length != 0) {
-            // on test seulement les obstacles susceptible d'entrer en collision le 2 premier du tableau car l'espacement minimal est de 4block
             for (var i = 0; i < 1; i++) {
-                if (((personnage.posx + personnage.sizex) >= PickupObject[i].posx && (personnage.posx + personnage.sizex) <= PickupObject[i].posx + PickupObject[i].sizex) || ((personnage.posx >= PickupObject[i].posx) && personnage.posx <= PickupObject[i].posx + PickupObject[i].sizex)) {
+                if ( (personnage.posx+personnage.sizex-18 >= PickupObject[i].posx) || ((personnage.posx > PickupObject[i].posx) && (personnage.posx <PickupObject[i].posx+PickupObject[i].sizex))) {
                     // et que le point le plus bas est dans l'obstacle
-                    if (personnage.posy > (PickupObject[i].posy+ PickupObject[i].sizey)) {
-                        PickupObject.splice(i,1);
+                    if (personnage.posy <= (PickupObject[i].posy+PickupObject[i].sizey)) {
+                        PickupObject.splice(i, 1);
                         bonus = true;
+                        diamandcount++;
                     }
                 }
             }
@@ -379,7 +451,7 @@ function control(e)
 
 
         //gestion des obstacles 
-        
+
         //on vérifie d'abord la présence d'obstacle sur le plateau
         if (obstacle.length != 0) {
             // on test seulement les obstacles susceptible d'entrer en collision le 2 premier du tableau car l'espacement minimal est de 4block
@@ -387,7 +459,7 @@ function control(e)
                 if (((personnage.posx + personnage.sizex) >= obstacle[i].posx && (personnage.posx + personnage.sizex) <= obstacle[i].posx + obstacle[i].sizex) || ((personnage.posx >= obstacle[i].posx) && personnage.posx <= obstacle[i].posx + obstacle[i].sizex)) {
                     // et que le point le plus bas est dans l'obstacle
                     if (personnage.posy + personnage.sizey > obstacle[i].posy) {
-                        GameLost == true;
+                        GameLost = true;
                     }
                 }
             }
@@ -396,97 +468,104 @@ function control(e)
 
 
     }
-    
-    //Calcul de l'état de jeu N+1
-    
-     function Scroll() {
 
-        // Personnage
-        //Mouvement personnage
-        if (ct % VitesseMouvement == 1 && saut == false) {
-            
-            ct = 1;
-            // modification du cycle de mouvement
-            if ((ctp % 4) + 1 == 1) {
-                personnage.sizex = 24;
-            };
-            if ((ctp % 4) + 1 == 2) {
-                personnage.sizex = 45;
-            };
-            if ((ctp % 4) + 1 == 3) {
-                personnage.sizex = 24;
-            };
-            if ((ctp % 4) + 1 == 4) {
-                personnage.sizex = 52;
-            };
-            personnage.type = index[(ctp % 4) + 1];
-            ctp++;
+
+    function HorsMap() {
+
+        // le sol est situé dans l'index 0 on commence donc à 1
+        for (var i = 1; i < Map.length; i++) {
+            if (Map[i].posx <= -252) {
+                Map.splice(i, 1);
+
+            }
         }
+    }
 
+    //Calcul de l'état de jeu N+1
+
+    function Scroll() {
+        Physique();
+        ct++;
+        CalcScore();
         if (saut == true) {
             Jump();
         }
 
+        // Personnage
+        //Mouvement personnage
+        if (ct % VitesseMouvement == 1 && saut == false) {
+
+            ct = 1;
+            // modification du cycle de mouvement
+            personnage.type = index[(ctp % 4) + 1];
+            ctp++;
+        }
+
+
+
         //sol
-        WalkableBlock[0].posx = WalkableBlock[0].posx - VitesseSol;
-        WalkableBlock[0].posx = WalkableBlock[0].posx % 30;
+        Map[0].type = index[level*10];
+        Map[0].posx = Map[0].posx - VitesseSol;
+        Map[0].posx = Map[0].posx % 30;
 
 
         //on calcule les nouveaux blocks
-        Obstacle();
-        WBlock();
+        WaBlock();
+        Obstacle(); 
         ScoreBonusBlock();
-        Dematerialize();
-        
-        //on bouge les blocks
-        for (var i = 0; i < ForRealtyOnly.length; i++) {
-            ForRealtyOnly[i].posx -= VitesseSol;
+        HorsMap();
+
+        //on bouge les blocks de la map
+        for (var i = 1; i < Map.length; i++) {
+            Map[i].posx -= VitesseSol;
+        }
+        for (var i = 0; i < WalkableBlock.length; i++) {
+            WalkableBlock[i].posx -= VitesseSol;
         }
         for (var i = 0; i < obstacle.length; i++) {
             obstacle[i].posx -= VitesseSol;
         }
-        for (var i = 1; i < WalkableBlock.length; i++) {
-            WalkableBlock[i].posx -= VitesseSol;
-        }
         for (var i = 0; i < PickupObject.length; i++) {
-            PickupObject[i].posx -= VitesseSol;
+            PickupObject[i].posx -= VitesseSol*2;
         }
-        // On applique le moteur physique 
-        Physique();
-        ct++;   
-        CalcScore();
+
+        // On applique le moteur physique
         Draw();
     }
 
     // Affichage de l'état de jeu
-    
+
     function Draw() {
         //On efface en affichant le Background par dessus l'image précédente
-        
+       if (GameLost == false)
+        {
         Background();
-        // Score
-        context.fillText(score,25,25);
         // personnage
         context.drawImage(personnage.type, personnage.posx, personnage.posy, personnage.sizex, personnage.sizey);
 
-        //Block dématérialisé
-        for (var i = 0; i < ForRealtyOnly.length; i++) {
-            context.drawImage(ForRealtyOnly[i].type, ForRealtyOnly[i].posx, ForRealtyOnly[i].posy, ForRealtyOnly[i].sizex, ForRealtyOnly[i].sizey);
+        //Map 
+        for (var i = 0; i < Map.length; i++) {
+            context.drawImage(Map[i].type, Map[i].posx, Map[i].posy, Map[i].sizex, Map[i].sizey);
         }
-        //Block de type sol 
-        for (var i = 0; i < WalkableBlock.length; i++) {
-            context.drawImage(WalkableBlock[i].type, WalkableBlock[i].posx, WalkableBlock[i].posy, WalkableBlock[i].sizex, WalkableBlock[i].sizey);
-        }
-        //Block de type obstacle
-        for (var i = 0; i < obstacle.length; i++) {
-            context.drawImage(obstacle[i].type, obstacle[i].posx, obstacle[i].posy, obstacle[i].sizex, obstacle[i].sizey);
-        }
-        //Block de type Objet
-        for (var i = 0; i < PickupObject.length;i++) {
+         for (var i = 0; i < PickupObject.length; i++) {
             context.drawImage(PickupObject[i].type, PickupObject[i].posx, PickupObject[i].posy, PickupObject[i].sizex, PickupObject[i].sizey);
         }
+        //overlay
+        context.drawImage(overlayscore.type,overlayscore.posx,overlayscore.posy,overlayscore.sizex,overlayscore.sizey);
+        context.drawImage(overlaydiamand.type,overlaydiamand.posx,overlaydiamand.posy,overlaydiamand.sizex,overlaydiamand.sizey);
+                // Score
+        context.fillText(score, 80, 37);
+        context.fillText(diamandcount, 55, 95);
+ 
         setTimeout(Scroll, VitesseGlobale);
+        }
+        else
+        {
+         context.drawImage(index[16],0,0);
+         context.font = '20pt VT323';
+         context.fillText(score,465,310);
+        }
     }
-    Draw();
+   Draw();
 
 });

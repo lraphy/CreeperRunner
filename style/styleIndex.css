@@ -95,13 +95,11 @@ body
 	font-size: 20pt;
 
 }
-#demoJeu
+#game #jeu
 {
 	display: block;
 	position: relative;
 	top: 450px;
-	width: 900px;
-	height:420px;
 	margin: auto;
 	border: solid 2px black;
 	background-image: url("../img/demoJeu.jpg");
